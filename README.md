@@ -344,6 +344,8 @@ A lot of work goes into a full-stack application, but it all relies on concepts
 that you've practiced thoroughly throughout this phase. Hopefully this template
 and guide will get you off to a good start with your Phase 4 Project.
 
+Happy coding!
+
 ---
 
 ## Resources
