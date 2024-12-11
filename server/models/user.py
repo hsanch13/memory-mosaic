@@ -5,6 +5,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from config import db
 import re
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 # Model set
@@ -54,10 +55,11 @@ class User(db.Model, SerializerMixin):
     @validates("password")
     def validate_password(self, _, value):
         if not isinstance(value, str):
-            raise ValueError("your password must be a string")
+            raise ValueError("Your password must be a string")
         if len(value) < 8:
-            raise ValueError("your password must be at least 8 characters long")
-        return value
+            raise ValueError("Your password must be at least 8 characters long")
+        return generate_password_hash(value)
+
 
     def __repr__(self):
         return f"<User: {self.username}, Email: {self.email}>"
