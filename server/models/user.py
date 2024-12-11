@@ -16,13 +16,15 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String(100), nullable=False, unique=True)
     password = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+    updated_at = db.Column(
+        db.DateTime, server_default=db.func.now(), onupdate=db.func.now()
+    )
 
     # Relationship
     boards = relationship("Board", back_populates="user", cascade="all, delete-orphan")
 
     # Serialization rules
-    serialize_rules = ("-boards",)
+    serialize_rules = ("-boards", "-password",)
 
     # Validation for username
     @validates("username")

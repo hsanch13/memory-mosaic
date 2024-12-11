@@ -4,10 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from config import db
-import re
 
 # Model set up
-class Board(db.Model):
+class Board(db.Model, SerializerMixin):
     __tablename__ = "boards"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -18,13 +17,18 @@ class Board(db.Model):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # Relationship
-    user = db.relationship('User', back_populates='boards')
-    answers = db.relationship('Answer', back_populates='board')
+    user = relationship("User", back_populates="boards")
+    answers = relationship("Answer", back_populates="board", cascade="all, delete-orphan")
 
     #Serialization rules
+    serialize_rules = ('-answers',)
 
     #Validations
-
+    @validates("board_type")
+    def validate_board_type(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError("Board type must be a string")
+        return value
 
     def __repr__(self):
         return f'<Board {self.board_name} is a {self.board_type} board>'
