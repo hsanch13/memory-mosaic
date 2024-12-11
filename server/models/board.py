@@ -21,7 +21,7 @@ class Board(db.Model, SerializerMixin):
     answers = relationship("Answer", back_populates="board", cascade="all, delete-orphan")
 
     #Serialization rules
-    serialize_rules = ('-answers',)
+    serialize_rules = ("-answers", "-user")
 
     #Validations
     @validates("board_type")
