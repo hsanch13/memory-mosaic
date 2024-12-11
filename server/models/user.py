@@ -7,13 +7,14 @@ from config import db
 import re
 
 
+# Model set
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False, unique=True)
-    email = db.Column(db.String, nullable=False, unique=True)
-    password = db.Column(db.String, nullable=False)
+    username = db.Column(db.String(100), nullable=False, unique=True)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    password = db.Column(db.String(120), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
@@ -37,7 +38,7 @@ class User(db.Model, SerializerMixin):
     def validate_email(self, _, value):
         if not isinstance(value, str):
             raise ValueError("your email must be a string")
-        # makes sure email is in a valid format using regex
+        #  regex -- makes sure email is in a valid format
         email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if not re.match(email_regex, value):
             raise ValueError("your email must be a valid format (e.g., xxx@xxx.com)")
@@ -57,4 +58,4 @@ class User(db.Model, SerializerMixin):
         return value
 
     def __repr__(self):
-        return f"<User - {self.username}, Email: {self.email}>"
+        return f"<User: {self.username}, Email: {self.email}>"
