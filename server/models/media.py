@@ -12,18 +12,25 @@ class Media(db.Model):
     __tablename__ = "medias"
 
     id = db.Column(db.Integer, primary_key=True)
-    answer_id = db.Column(db.Integer, db.ForeignKey("answer.id"), nullable=False)
+    answer_id = db.Column(db.Integer, db.ForeignKey("answer.id"), nullable=False, index=True)
     url = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(
-    db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # Relationship
     answer = db.relationship("Answer", back_populates="media")
 
     # Serialization Rules
+    serialize_rules = ["-answer.media"]
 
     # Validations
+    @validates("url")
+    def validate_url(self, _, value):
+        if not isinstance(value, str):
+            raise ValueError("url must be a string")
+        if not value.startswith("http"):  # req. valid URL format
+            raise ValueError("url must be a valid URL")
+        return value
 
 def __repr__(self):
     return f'<Media {self.url}>'
