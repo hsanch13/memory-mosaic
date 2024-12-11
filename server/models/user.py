@@ -13,9 +13,9 @@ class User(db.Model, SerializerMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False, unique=True)
-    email = db.Column(db.String(100), nullable=False, unique=True, index=True)
-    password = db.Column(db.String(120), nullable=False)
+    username = db.Column(db.String(30), nullable=False, unique=True)
+    email = db.Column(db.String(120), nullable=False, unique=True, index=True)
+    password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), onupdate=db.func.now()
@@ -58,8 +58,10 @@ class User(db.Model, SerializerMixin):
             raise ValueError("Your password must be a string")
         if len(value) < 8:
             raise ValueError("Your password must be at least 8 characters long")
+        password_regex = r"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$"
+        if not re.match(password_regex, value):
+            raise ValueError("your password must contain at least one capital letter, one symbol AND one number")
         return generate_password_hash(value)
-
 
     def __repr__(self):
         return f"<User: {self.username}, Email: {self.email}>"
