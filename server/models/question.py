@@ -34,12 +34,12 @@ class Question(db.Model, SerializerMixin):
     @validates('text')
     def validate_text(self, _, value):
         if not isinstance(value, str):
-            raise ValueError("Question text must be a string.")
+            raise ValueError("question text must be a string.")
         return value
 
     @validates('board_type')
     def validate_board_type(self, _, value):
-        valid_board_types = ['birthday', 'yearly recap', 'celebration']
+        valid_board_types = ['birthday', 'yearly recap', 'celebration', 'other']
         if not isinstance(value, str):
             raise ValueError("Board type must be a string.")
         if value.lower() not in valid_board_types:
