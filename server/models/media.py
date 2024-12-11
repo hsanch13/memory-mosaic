@@ -18,7 +18,7 @@ class Media(db.Model):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # Relationship
-    answer = db.relationship("Answer", back_populates="media")
+    answer = db.relationship("Answer", back_populates="media", cascade="all, delete-orphan")
 
     # Serialization Rules
     serialize_rules = ["-answer.media"]
