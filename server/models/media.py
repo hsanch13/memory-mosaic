@@ -6,7 +6,7 @@ from sqlalchemy.ext.associationproxy import association_proxy
 from config import db
 
 # Model set up
-class Media(db.Model):
+class Media(db.Model, SerializerMixin):
     __tablename__ = "media"
 
     id = db.Column(db.Integer, primary_key=True)

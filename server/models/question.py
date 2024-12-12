@@ -14,7 +14,7 @@ class Question(db.Model, SerializerMixin):
     board_type = db.Column(db.String(50), nullable=False)
 
     # Relationships
-    answers = db.relationship("Answer", back_populates="question", cascade="all, delete-orphan")
+    answers = db.relationship("Answer", back_populates="questions", cascade="all, delete-orphan")
 
     # Serialization rules
     serialize_rules = ('-answers',)

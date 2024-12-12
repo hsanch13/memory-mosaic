@@ -18,7 +18,7 @@ class Answer(db.Model, SerializerMixin):
     # Relationship
     board = db.relationship("Board", back_populates="answers")
     question = db.relationship("Question", back_populates="answers")
-    media = db.relationship("Media", back_populates="answer", cascade="all, delete-orphan")
+    media = db.relationship("Media", back_populates="answers", cascade="all, delete-orphan")
 
     # Serialization rules
     serialize_rules = ["-board", "-question", "-media"]

@@ -13,8 +13,8 @@ class BoardMedia(db.Model, SerializerMixin):
     board_id = db.Column(db.Integer, db.ForeignKey("board.id"), nullable=False, index=True)
 
     #Relationship
-    media = db.relationship("Media", back_populates="boards_media")
-    board = db.relationship("Board", back_populates="boards_media")
+    media = db.relationship("Media", back_populates="board_media")
+    board = db.relationship("Board", back_populates="board_media")
 
     #Serialization
     serialize_rules = ("-board.board_media", "-media.board_media")
