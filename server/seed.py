@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-from models import User, Board, Question, Answer, Media, BoardMedia
+from models.User import User
+from models.Board import Board
+from models.Answer import Answer
+from models.Question import Question
+from models.Media import Media
+from models.BoardMedia import BoardMedia
 
 # Standard library imports
 from random import randint, choice as rc
@@ -9,7 +14,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db
+from config import db
 
 if __name__ == "__main__":
     fake = Faker()
