@@ -17,11 +17,12 @@ class Board(db.Model, SerializerMixin):
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # Relationship
-    user = relationship("User", back_populates="boards")
-    answers = relationship("Answer", back_populates="board", cascade="all, delete-orphan")
+    user = db.relationship("User", back_populates="boards")
+    answers = db.relationship("Answer", back_populates="board", cascade="all, delete-orphan")
+    board_media = db.relationship("BoardMedia", back_populates="board")
 
     #Serialization rules
-    serialize_rules = ("-answers", "-user")
+    serialize_rules = ("-answers", "-user", "-board_media")
 
     #Validations
     @validates("board_type")

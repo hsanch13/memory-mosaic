@@ -9,7 +9,7 @@ import re
 
 # Model set up
 class Media(db.Model):
-    __tablename__ = "medias"
+    __tablename__ = "media"
 
     id = db.Column(db.Integer, primary_key=True)
     answer_id = db.Column(db.Integer, db.ForeignKey("answer.id"), nullable=False, index=True)
@@ -19,9 +19,10 @@ class Media(db.Model):
 
     # Relationship
     answer = db.relationship("Answer", back_populates="media", cascade="all, delete-orphan")
+    board_media = db.relationship("BoardMedia", back_populates="media")
 
     # Serialization Rules
-    serialize_rules = ["-answer.media"]
+    serialize_rules = ["-answer.media", "-board_media"]
 
     # Validations
     @validates("url")
