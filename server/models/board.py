@@ -10,7 +10,7 @@ class Board(db.Model, SerializerMixin):
     __tablename__ = "boards"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
     board_type = db.Column(db.String(100), nullable=False, index=True)
     board_name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
@@ -18,17 +18,17 @@ class Board(db.Model, SerializerMixin):
 
     # Relationship
     user = db.relationship("User", back_populates="boards")
-    answers = db.relationship("Answer", back_populates="boards", cascade="all, delete-orphan")
-    board_media = db.relationship("BoardMedia", back_populates="boards")
+    answers = db.relationship("Answer", back_populates="board", cascade="all, delete-orphan")
+    board_media = db.relationship("BoardMedia", back_populates="board")
 
     #Serialization rules
-    serialize_rules = ("-answers", "-user", "-board_media")
+    serialize_rules = ["-user.boards", "-answers.board", "-board_media.board"]
 
     #Validations
     @validates("board_type")
     def validate_board_type(self, _, value):
         valid_boards = [
-            "birthday", "yearly recap", "celebration"
+            "birthday", "yearly recap", "celebration", "other"
         ]
         if not isinstance(value, str):
             raise ValueError("your topic must be a string")
@@ -36,11 +36,11 @@ class Board(db.Model, SerializerMixin):
             raise ValueError(f"your topic is not one of these valid topics: {valid_boards}")
         return value.lower()
 
-    @validates("board-name")
+    @validates("board_name")
     def validate_board_name(self, _, value):
         if not isinstance(value, str):
             raise ValueError("your board name must be a string")
-        if value not in range (1, 101):
+        if len(value) not in range(1, 101):
             raise ValueError("your board name must be between 1 and 100 characters")
         return value
     

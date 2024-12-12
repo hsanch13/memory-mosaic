@@ -10,17 +10,17 @@ class Media(db.Model, SerializerMixin):
     __tablename__ = "media"
 
     id = db.Column(db.Integer, primary_key=True)
-    answer_id = db.Column(db.Integer, db.ForeignKey("answer.id"), nullable=False, index=True)
+    answer_id = db.Column(db.Integer, db.ForeignKey("answers.id"), nullable=False, index=True)
     url = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     # Relationship
-    answer = db.relationship("Answer", back_populates="media", cascade="all, delete-orphan")
+    answer = db.relationship("Answer", back_populates="media")
     board_media = db.relationship("BoardMedia", back_populates="media")
 
     # Serialization Rules
-    serialize_rules = ["-answer.media", "-board_media"]
+    serialize_rules = ["-answer.media", "-board_media.media"]
 
     # Validations
     @validates("url")
