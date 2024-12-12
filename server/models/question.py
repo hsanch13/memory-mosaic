@@ -4,17 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from config import db
-import re
-
-
-# Model set up
-from sqlalchemy.orm import relationship, validates
-from sqlalchemy_serializer import SerializerMixin
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
-from config import db
-import re
-
 
 # Model set up
 class Question(db.Model, SerializerMixin):

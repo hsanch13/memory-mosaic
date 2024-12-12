@@ -22,7 +22,7 @@ class User(db.Model, SerializerMixin):
     )
 
     # Relationship
-    boards = relationship("Board", back_populates="user", cascade="all, delete-orphan")
+    boards = db.relationship("Board", back_populates="user", cascade="all, delete-orphan")
 
     # Serialization rules
     serialize_rules = ("-boards", "-password",)
