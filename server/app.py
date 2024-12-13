@@ -21,6 +21,7 @@ from routes.question.questions import Questions
 from routes.question.questions_by_id import QuestionsById
 from routes.question.questions_by_board_type import QuestionsByBoardType
 from routes.board.boards import Boards
+from routes.board.boards_by_id import BoardsById
 
 from routes.board_media.board_media import BoardMedia
 
@@ -41,7 +42,7 @@ api.add_resource(Questions, "/questions")
 api.add_resource(QuestionsById, "/questions/<int:id>")
 api.add_resource(QuestionsByBoardType, "/questions/board-type/<string:board_type>")
 api.add_resource(Boards, "/boards")
-# api.add_resource(Boards, "/boards/,int:id>")
+api.add_resource(BoardsById, "/boards/<int:id>")
 
 api.add_resource(BoardMedia, "/board-media")
 
