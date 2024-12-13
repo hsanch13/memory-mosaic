@@ -1,12 +1,8 @@
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
-from sqlalchemy.ext.associationproxy import association_proxy
-from config import db
+from sqlalchemy.ext.hybrid import hybrid_property
+from config import db, flask_bcrypt
 import re
-from werkzeug.security import generate_password_hash, check_password_hash
-
 
 # Model set
 class User(db.Model, SerializerMixin):
@@ -15,7 +11,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(120), nullable=False, unique=True, index=True)
-    password = db.Column(db.String(128), nullable=False)
+    _password_hash = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), onupdate=db.func.now()
@@ -52,16 +48,21 @@ class User(db.Model, SerializerMixin):
         return value
 
     # Validation for password
-    @validates("password")
-    def validate_password(self, _, value):
-        if not isinstance(value, str):
-            raise ValueError("Your password must be a string")
-        if len(value) < 8:
-            raise ValueError("Your password must be at least 8 characters long")
-        password_regex = r"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?\":{}|<>]).{8,}$"
-        if not re.match(password_regex, value):
-            raise ValueError("your password must contain at least one capital letter, one symbol AND one number")
-        return generate_password_hash(value)
+    @hybrid_property
+    def password(self):
+        raise AttributeError("passwords can only be set, not read.")
 
+    @password.setter
+    def password(self, password_to_validate):
+        if not isinstance(password_to_validate, str):
+            raise TypeError("password must be a string")
+        if not 10 < len(password_to_validate) < 20:
+            raise ValueError("password must be a string between 10 and 20 characters long")
+        hashed_password = flask_bcrypt.generate_password_hash(password_to_validate).decode("utf-8")
+        self._password_hash = hashed_password
+
+    def authenticate(self, password_to_check):
+        return flask_bcrypt.check_password_hash(self._password_hash, password_to_check)
+    
     def __repr__(self):
         return f"<User: {self.username}, Email: {self.email}>"

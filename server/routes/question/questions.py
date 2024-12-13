@@ -1,10 +1,8 @@
-from models import Answer, Board, BoardMedia, Media, Question, User
+from models import Question 
 from flask_migrate import Migrate
 from flask import request, make_response
 from flask_restful import Resource
-from werkzeug.exceptions import NotFound
 from config import app, db, api
-
 
 ###CRUD FOR QUESTIONS
 class Questions(Resource):
@@ -54,5 +52,3 @@ class Questions(Resource):
             return make_response({"message": f"Question with id {id} deleted"}, 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
-
-api.add_resource(Questions, "/questions", "/questions/<int:id>")

@@ -1,14 +1,9 @@
 from routes.__init__ import Resource, request, db, make_response, session
-from models.user import User
+from models.User import User
 from sqlalchemy.exc import IntegrityError
 
 class Signup(Resource):
-    def post(self):
-        #! 1. extract the data out of the request (username, email, psswd)
-        #! 2. Instantiate a user with the info above
-        #! 3. db.session.add(user)
-        #! 4. db.session.commit()
-        #! 5. NOW set the user_id in session
+    def post(self): 
         try:
             data = request.json
             user = User(email=data.get("email"), username=data.get("username"))

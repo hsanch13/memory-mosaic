@@ -39,7 +39,7 @@ def seed_data():
                 user = User(
                     username=faker.user_name(),
                     email=email,
-                    password="Pass@1234",  # Set a default password for simplicity
+                    _password_hash="Pass@1234",  # Set a default password for simplicity
                 )
                 users.append(user)
             db.session.add_all(users)

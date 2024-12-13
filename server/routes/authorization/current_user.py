@@ -1,4 +1,4 @@
-from routes.__init__ import Resource, request, db, make_response, session
+from routes.__init__ import Resource, db, make_response, session
 from models.User import User
 
 class CurrentUser(Resource):
