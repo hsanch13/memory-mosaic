@@ -17,7 +17,7 @@ class Question(db.Model, SerializerMixin):
     answers = db.relationship("Answer", back_populates="question", cascade="all, delete-orphan")
 
     # Serialization rules
-    serialize_rules = ["-answers.question"]
+    serialize_rules = ["-answers"]
 
     # Validations
     @validates('text')

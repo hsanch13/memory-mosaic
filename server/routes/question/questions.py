@@ -1,19 +1,13 @@
 from models import Question 
-from flask_migrate import Migrate
 from flask import request, make_response
 from flask_restful import Resource
-from config import app, db, api
+from config import db
 
 ###CRUD FOR QUESTIONS
 class Questions(Resource):
-    def get(self, id=None):
+    def get(self):
         try:
-            if id:
-                question = Question.query.get(id)
-                if not question:
-                    return make_response({"error": f"Question with id {id} not found"}, 404)
-                return make_response(question.to_dict(), 200)
-            questions = Question.query.all()
+            questions = Question.query
             return make_response([question.to_dict() for question in questions], 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)

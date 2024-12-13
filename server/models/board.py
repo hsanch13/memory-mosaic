@@ -22,7 +22,7 @@ class Board(db.Model, SerializerMixin):
     board_media = db.relationship("BoardMedia", back_populates="board")
 
     #Serialization rules
-    serialize_rules = ["-user.boards", "-answers.board", "-board_media.board"]
+    serialize_rules = ["-user", "-answers", "-board_media"]
 
     #Validations
     @validates("board_type")
