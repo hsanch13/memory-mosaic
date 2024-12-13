@@ -13,6 +13,7 @@ from config import app, db, api
 from models import Answer, Board, BoardMedia, Media, Question, User
 
 # Add your route imports
+from routes.upload.uploads import Uploads
 from routes.authorization.current_user import CurrentUser
 from routes.authorization.login import Login
 from routes.authorization.logout import Logout
@@ -33,18 +34,25 @@ app.secret_key="vicky's_secret"
 def index():
     return '<h1>Memory Mosaic Server</h1>'
 
+
 #API ROUTES
+api.add_resource(Uploads, "/uploads")
+
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Logout, '/logout')
 api.add_resource(CurrentUser, '/current-user')
+
 api.add_resource(Questions, "/questions")
 api.add_resource(QuestionsById, "/questions/<int:id>")
 api.add_resource(QuestionsByBoardType, "/questions/board-type/<string:board_type>")
+
 api.add_resource(Boards, "/boards")
 api.add_resource(BoardsById, "/boards/<int:id>")
 
 api.add_resource(BoardMedia, "/board-media")
+
+
 
 
 if __name__ == '__main__':

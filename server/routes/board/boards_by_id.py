@@ -8,8 +8,9 @@ class BoardsById(Resource):
         try:
             board = Board.query.get(id)
             if not board:
+                #add check to make sure it is the Current USERS board, and user must be logged in
                 return make_response({"error": f"Board with id {id} not found"}, 404)
-            return make_response(board.to_dict(), 200)
+            return make_response(board.to_dict(rules=("answers", "answers.medias")), 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
         
@@ -17,6 +18,7 @@ class BoardsById(Resource):
         try:
             board = Board.query.get(id)
             if not board:
+            #add check to make sure it is the Current USERS board
                 return make_response({"error": f"Board with id {id} not found"}, 404)
             data = request.get_json()
             board.board_type = data.get("board_type", board.board_type)
