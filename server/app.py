@@ -23,6 +23,7 @@ from routes.question.questions_by_id import QuestionsById
 from routes.question.questions_by_board_type import QuestionsByBoardType
 from routes.board.boards import Boards
 from routes.board.boards_by_id import BoardsById
+from routes.board.board_resource import BoardResource
 
 from routes.board_media.board_media import BoardMedia
 
@@ -36,6 +37,8 @@ def index():
 
 
 #API ROUTES
+api.add_resource(BoardResource, "/create-board")
+
 api.add_resource(Uploads, "/uploads")
 
 api.add_resource(Signup, '/signup')

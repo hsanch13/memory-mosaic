@@ -9,7 +9,6 @@ import ipdb
 class Uploads(Resource):
     def post(self):
         try:
-            ipdb.set_trace()
             if 'file' not in request.files:
                 return make_response({'error': 'No file uploaded'}), 400
             file = request.files['file']

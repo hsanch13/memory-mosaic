@@ -17,7 +17,7 @@ class Media(db.Model, SerializerMixin):
 
     # Relationship
     answer = db.relationship("Answer", back_populates="media")
-    board_media = db.relationship("BoardMedia", back_populates="media")
+    board = db.relationship("Board", back_populates="media")
 
     # Serialization Rules
     serialize_rules = ["-answer.media", "-board_media.media"]
