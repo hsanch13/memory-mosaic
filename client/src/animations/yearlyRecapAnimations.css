@@ -1,0 +1,29 @@
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .section-hover {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .section-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+  }
+  
+  .gradient-border {
+    border: 2px solid;
+    border-image: linear-gradient(to right, #2C2C2C, #000000) 1;
+  }
+  

@@ -21,7 +21,7 @@ class User(db.Model, SerializerMixin):
     boards = db.relationship("Board", back_populates="user", cascade="all, delete-orphan")
 
     # Serialization rules
-    serialize_rules = ["-boards.user", "-password"]
+    serialize_rules = ("-boards", "-password")
 
     # Validation for username
     @validates("username")

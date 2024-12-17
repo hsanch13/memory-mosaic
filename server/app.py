@@ -55,9 +55,5 @@ api.add_resource(BoardsById, "/boards/<int:id>")
 
 api.add_resource(BoardMedia, "/board-media")
 
-
-
-
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
-

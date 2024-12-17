@@ -21,7 +21,7 @@ class Answer(db.Model, SerializerMixin):
     media = db.relationship("Media", back_populates="answer", cascade="all, delete-orphan", single_parent=True)
 
     # Serialization rules
-    serialize_rules = ["-board.answers", "-question.answers", "-media"]
+    serialize_rules = ("-board", "-question", "-media")
 
     # Validations
     @validates("answer_text")

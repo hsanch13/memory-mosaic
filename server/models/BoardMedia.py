@@ -17,7 +17,7 @@ class BoardMedia(db.Model, SerializerMixin):
     board = db.relationship("Board", back_populates="board_media")
 
     #Serialization
-    serialize_rules = ["-board.board_media", "-media.board_media"]
+    serialize_rules = ("-board", "-media")
 
     #Validation
     #makes sure same media can't be used on the board more than once to maintain uniqueness

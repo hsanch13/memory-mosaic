@@ -1,0 +1,32 @@
+@keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .slide-up {
+    animation: slideUp 1s ease-in-out;
+  }
+  
+  .photo-hover {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .photo-hover:hover {
+    transform: scale(1.1);
+  }
+  
+  .text-pop {
+    transition: color 0.3s ease;
+  }
+  
+  .text-pop:hover {
+    color: #2D6A4F;
+    text-decoration: underline;
+  }
+  

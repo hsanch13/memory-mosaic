@@ -19,10 +19,10 @@ class Board(db.Model, SerializerMixin):
     # Relationship
     user = db.relationship("User", back_populates="boards")
     answers = db.relationship("Answer", back_populates="board", cascade="all, delete-orphan")
-    # board_media = db.relationship("BoardMedia", back_populates="board")
+    board_media = db.relationship("BoardMedia", back_populates="board", cascade="all, delete-orphan")
 
     #Serialization rules
-    serialize_rules = ["-user", "-answers", "-board_media"]
+    serialize_rules = ("-user", "-answers", "-board_media")
 
     #Validations
     @validates("board_type")

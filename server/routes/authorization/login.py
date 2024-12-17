@@ -1,5 +1,6 @@
-from routes.__init__ import Resource, request, db, make_response, session
+from routes.__init__ import Resource, request, make_response, session
 from models.User import User
+import traceback
 
 class Login(Resource):
     def post(self):
@@ -12,4 +13,5 @@ class Login(Resource):
             else:
                 return make_response("Invalid Credentials", 401)
         except Exception as e:
+            print(traceback.format_exc())
             return {"error": str(e)}, 400
