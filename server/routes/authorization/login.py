@@ -6,12 +6,19 @@ class Login(Resource):
     def post(self):
         try:
             data = request.json
-            user = User.query.filter_by(email=data.get("email", "")).first()
-            if user and user.authenticate(data.get("password", "")):
-                session["user_id"] = user.id
-                return make_response(user.to_dict(), 200)
+            email = data.get("email", "").strip()
+            password = data.get("password", "").strip()
+
+            # Fetch user by email
+            user = User.query.filter_by(email=email).first()
+            if user and user.authenticate(password):
+                session["user_id"] = user.id  # Save user_id in session
+                return make_response({
+                    "message": "Login successful",
+                    "user": {"id": user.id, "username": user.username, "email": user.email}
+                }, 200)
             else:
-                return make_response("Invalid Credentials", 401)
+                return make_response({"error": "Invalid Credentials"}, 401)
         except Exception as e:
             print(traceback.format_exc())
-            return {"error": str(e)}, 400
+            return make_response({"error": str(e)}, 400)

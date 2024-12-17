@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: 5960ea1ed407
+Revision ID: 282f0ff0498a
 Revises: 
-Create Date: 2024-12-16 20:20:08.948844
+Create Date: 2024-12-16 21:15:00.337243
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5960ea1ed407'
+revision = '282f0ff0498a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -61,7 +61,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('answers', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_answers_board_id'), ['board_id'], unique=False)
+        batch_op.create_index(batch_op.f('ix_answers_question_id'), ['question_id'], unique=False)
 
     op.create_table('media',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -100,7 +100,7 @@ def downgrade():
 
     op.drop_table('media')
     with op.batch_alter_table('answers', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_answers_board_id'))
+        batch_op.drop_index(batch_op.f('ix_answers_question_id'))
 
     op.drop_table('answers')
     with op.batch_alter_table('boards', schema=None) as batch_op:

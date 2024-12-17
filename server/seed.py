@@ -15,6 +15,7 @@ def seed_data():
     with app.app_context():
         try:
             print("Starting seed...")
+
             # Clear existing data
             db.session.query(BoardMedia).delete()
             db.session.query(Media).delete()
@@ -26,16 +27,25 @@ def seed_data():
 
             faker = Faker()
 
-            # Seed Users
-            # Seed Users
-            users = []
-            for _ in range(5):
+            # Seed a test user with known credentials
+            test_user = User(
+                username="testuser",
+                email="test@example.com"
+            )
+            test_user.password = "Test@12345!"  # Hashes password using the setter
+            db.session.add(test_user)
+            db.session.commit()
+            print("Test user seeded: email=test@example.com, password=Test@12345")
+
+            # Seed additional users
+            users = [test_user]  # Start with the test user
+            for _ in range(4):  # Add 4 more random users
                 email = faker.unique.email()
                 user = User(
                     username=faker.user_name(),
                     email=email
                 )
-                user.password = "Pass@12345!"  # Assign password using the setter
+                user.password = "Pass@12345!"  # Assign random password
                 users.append(user)
 
             db.session.add_all(users)
@@ -54,7 +64,7 @@ def seed_data():
             db.session.add_all(boards)
             db.session.commit()
 
-            # Hardcoded Questions (Exact Same Data You Provided)
+            # Hardcoded Questions
             questions_data = {
                 "birthday": [
                     "What’s one moment from today that deserves a permanent spot in your memory?",
@@ -112,7 +122,7 @@ def seed_data():
             # Seed Media
             media_items = []
             for answer in answers:
-                if faker.boolean(chance_of_getting_true=70):  # 70% chance to add media
+                if faker.boolean(chance_of_getting_true=90):  # 90% chance to add media
                     media = Media(
                         answer_id=answer.id,
                         url=faker.image_url(),

@@ -4,11 +4,14 @@ from models.User import User
 class CurrentUser(Resource):
     def get(self):
         try:
-            if "user_id" in session:
-                if user := db.session.get(User, session["user_id"]):
-                    return make_response(user.to_dict(), 200)
-                del session["user_id"]
-                return make_response({"error": "Unauthorized, user_id in session does not exist, it has been removed"}, 401)
-            return make_response({"error": "Unauthorized, please login!"}, 401)
+            user_id = session.get("user_id")
+            if user_id:
+                user = User.query.get(user_id)
+                return make_response({
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email
+                }, 200)
+            return make_response({"error": "Not logged in"}, 401)
         except Exception as e:
-            return {"error": str(e)}, 422
+            return make_response({"error": str(e)}, 400)

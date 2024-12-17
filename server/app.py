@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Standard library imports
+from flask_cors import CORS
 
 # Remote library imports
 from flask import request
@@ -28,9 +29,9 @@ from routes.board.board_resource import BoardResource
 from routes.board_media.board_media import BoardMedia
 
 app.secret_key="vicky's_secret"
+CORS(app, supports_credentials=True)
 
 # Views go here!
-
 @app.route('/')
 def index():
     return '<h1>Memory Mosaic Server</h1>'
