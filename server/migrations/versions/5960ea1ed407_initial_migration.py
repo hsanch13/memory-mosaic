@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: dc005b3375b8
+Revision ID: 5960ea1ed407
 Revises: 
-Create Date: 2024-12-16 14:06:06.519305
+Create Date: 2024-12-16 20:20:08.948844
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'dc005b3375b8'
+revision = '5960ea1ed407'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -48,7 +48,7 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('boards', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_boards_board_type'), ['board_type'], unique=False)
+        batch_op.create_index(batch_op.f('ix_boards_user_id'), ['user_id'], unique=False)
 
     op.create_table('answers',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -61,17 +61,15 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('answers', schema=None) as batch_op:
-        batch_op.create_index(batch_op.f('ix_answers_question_id'), ['question_id'], unique=False)
+        batch_op.create_index(batch_op.f('ix_answers_board_id'), ['board_id'], unique=False)
 
     op.create_table('media',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('answer_id', sa.Integer(), nullable=False),
-    sa.Column('board_id', sa.Integer(), nullable=False),
     sa.Column('url', sa.String(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['answer_id'], ['answers.id'], name=op.f('fk_media_answer_id_answers')),
-    sa.ForeignKeyConstraint(['board_id'], ['boards.id'], name=op.f('fk_media_board_id_boards')),
     sa.PrimaryKeyConstraint('id')
     )
     with op.batch_alter_table('media', schema=None) as batch_op:
@@ -102,11 +100,11 @@ def downgrade():
 
     op.drop_table('media')
     with op.batch_alter_table('answers', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_answers_question_id'))
+        batch_op.drop_index(batch_op.f('ix_answers_board_id'))
 
     op.drop_table('answers')
     with op.batch_alter_table('boards', schema=None) as batch_op:
-        batch_op.drop_index(batch_op.f('ix_boards_board_type'))
+        batch_op.drop_index(batch_op.f('ix_boards_user_id'))
 
     op.drop_table('boards')
     with op.batch_alter_table('users', schema=None) as batch_op:

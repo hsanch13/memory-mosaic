@@ -16,33 +16,31 @@ class Board(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
-    # Relationship
+    # Relationships
     user = db.relationship("User", back_populates="boards")
     answers = db.relationship("Answer", back_populates="board", cascade="all, delete-orphan")
     board_media = db.relationship("BoardMedia", back_populates="board", cascade="all, delete-orphan")
 
-    #Serialization rules
+    # Serialization Rules
     serialize_rules = ("-user", "-answers", "-board_media")
 
-    #Validations
+    # Validations
     @validates("board_type")
     def validate_board_type(self, _, value):
-        valid_boards = [
-            "birthday", "yearly recap", "celebration", "other"
-        ]
+        valid_boards = ["birthday", "yearly recap", "celebration", "other"]
         if not isinstance(value, str):
-            raise ValueError("your topic must be a string")
+            raise ValueError("Board type must be a string")
         if value.lower() not in valid_boards:
-            raise ValueError(f"your topic is not one of these valid topics: {valid_boards}")
+            raise ValueError(f"Invalid board type: {value}. Must be one of {valid_boards}.")
         return value.lower()
 
     @validates("board_name")
     def validate_board_name(self, _, value):
-        if not isinstance(value, str):
-            raise ValueError("your board name must be a string")
-        if len(value) not in range(1, 101):
-            raise ValueError("your board name must be between 1 and 100 characters")
-        return value
-    
+        if not isinstance(value, str) or len(value.strip()) == 0:
+            raise ValueError("Board name must be a non-empty string")
+        if len(value) > 100:
+            raise ValueError("Board name must be 100 characters or less")
+        return value.strip()
+
     def __repr__(self):
-        return f'<Board {self.board_name} is a {self.board_type} board>'
+        return f"<Board {self.board_name} ({self.board_type})>"

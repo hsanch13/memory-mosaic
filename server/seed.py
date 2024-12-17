@@ -6,13 +6,8 @@ from models.Question import Question
 from models.Media import Media
 from models.BoardMedia import BoardMedia
 
-# Standard library imports
-from random import randint, choice as rc
-
-# Remote library imports
+from random import choice, sample
 from faker import Faker
-
-# Local imports
 from app import app
 from config import db
 
@@ -20,45 +15,46 @@ def seed_data():
     with app.app_context():
         try:
             print("Starting seed...")
-            # Clear existing data and commit changes
-            BoardMedia.query.delete()
-            Media.query.delete()
-            Answer.query.delete()
-            Question.query.delete()
-            Board.query.delete()
-            User.query.delete()
-            db.session.commit()  # Commit to ensure deletions are applied
+            # Clear existing data
+            db.session.query(BoardMedia).delete()
+            db.session.query(Media).delete()
+            db.session.query(Answer).delete()
+            db.session.query(Question).delete()
+            db.session.query(Board).delete()
+            db.session.query(User).delete()
+            db.session.commit()
 
-            # Seed Users with Faker
             faker = Faker()
+
+            # Seed Users
+            # Seed Users
             users = []
-            for _ in range(5):  # Generate 5 users
-                email = faker.email()
-                while User.query.filter_by(email=email).first():  # Check if email is unique
-                    email = faker.email()
+            for _ in range(5):
+                email = faker.unique.email()
                 user = User(
                     username=faker.user_name(),
-                    email=email,
-                    _password_hash="Pass@1234",  # Set a default password for simplicity
+                    email=email
                 )
+                user.password = "Pass@12345!"  # Assign password using the setter
                 users.append(user)
+
             db.session.add_all(users)
             db.session.commit()
 
-            # Seed Boards with Faker
+            # Seed Boards
             board_types = ["birthday", "yearly recap", "celebration", "other"]
-            boards = []
-            for i, board_type in enumerate(board_types):
-                board = Board(
-                    user_id=users[i % len(users)].id,  # Assign boards to users cyclically
+            boards = [
+                Board(
+                    user_id=choice(users).id,
                     board_type=board_type,
-                    board_name=f"{faker.catch_phrase().capitalize()} {board_type.capitalize()} Board",
+                    board_name=f"{faker.catch_phrase()} {board_type.capitalize()} Board",
                 )
-                boards.append(board)
+                for board_type in board_types
+            ]
             db.session.add_all(boards)
             db.session.commit()
 
-            # Manually Seed Questions
+            # Hardcoded Questions (Exact Same Data You Provided)
             questions_data = {
                 "birthday": [
                     "What’s one moment from today that deserves a permanent spot in your memory?",
@@ -86,62 +82,63 @@ def seed_data():
                     "Describe what made you pause and take it all in.",
                     "Is there an object, big or small, that feels meaningful? Why?",
                     "If you could capture one conversation in a photo, what would it look like?",
-                    "What’s one thing about your surroundings feels comforting or inspiring?",
+                    "What’s one thing about your surroundings that feels comforting or inspiring?",
                 ],
             }
 
+            # Seed Questions
             questions = []
-            for board_type, questions_list in questions_data.items():
-                for text in questions_list:
+            for board_type, texts in questions_data.items():
+                for text in texts:
                     question = Question(text=text, board_type=board_type)
                     questions.append(question)
             db.session.add_all(questions)
             db.session.commit()
 
-            # Seed Answers and Media with Faker
+            # Seed Answers
             answers = []
-            media_items = []
             for board in boards:
-                for _ in range(5):  # Generate 5 answers per board
+                board_questions = [q for q in questions if q.board_type == board.board_type]
+                for question in board_questions:
                     answer = Answer(
                         board_id=board.id,
-                        question_id=faker.random_element(questions).id,
+                        question_id=question.id,
                         answer_text=faker.sentence(nb_words=10),
                     )
                     answers.append(answer)
-                    db.session.add(answer)
-                    db.session.commit()  # Commit to ensure answer IDs are available
-
-                    # Add Media to some answers
-                    if faker.boolean(chance_of_getting_true=80):  # 80% chance of having media
-                        media = Media(answer_id=answer.id, url=faker.image_url())
-                        media_items.append(media)
-                        db.session.add(media)
-
-            # Commit media additions
+            db.session.add_all(answers)
             db.session.commit()
 
-            # Ensure media_items is not empty before creating BoardMedia items
-            if media_items:
-                # Seed BoardMedia with Faker
-                board_media_items = []
-                for board in boards:
-                    for _ in range(3):  # Attach 3 media items per board
-                        media_id = faker.random_element(media_items).id
-                        board_media = BoardMedia(
-                            board_id=board.id, media_id=media_id
-                        )
-                        board_media_items.append(board_media)
-                db.session.add_all(board_media_items)
-                db.session.commit()
+            # Seed Media
+            media_items = []
+            for answer in answers:
+                if faker.boolean(chance_of_getting_true=70):  # 70% chance to add media
+                    media = Media(
+                        answer_id=answer.id,
+                        url=faker.image_url(),
+                    )
+                    media_items.append(media)
+            db.session.add_all(media_items)
+            db.session.commit()
+
+            # Seed BoardMedia (Avoid Duplicates)
+            board_media_pairs = set()
+            board_media_items = []
+            for board in boards:
+                for media in sample(media_items, min(len(media_items), 3)):
+                    if (board.id, media.id) not in board_media_pairs:
+                        board_media_pairs.add((board.id, media.id))
+                        board_media_items.append(BoardMedia(board_id=board.id, media_id=media.id))
+            db.session.add_all(board_media_items)
+            db.session.commit()
 
             print("Seeding complete!")
 
         except Exception as e:
-            db.session.rollback()  # Rollback any changes if an error occurs
+            db.session.rollback()
             print(f"Error during seeding: {e}")
         finally:
-            db.session.remove()  # Ensure session is properly closed
+            db.session.remove()
 
 if __name__ == "__main__":
     seed_data()
