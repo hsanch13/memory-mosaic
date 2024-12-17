@@ -14,10 +14,11 @@ function App() {
   return (
     <Router>
       <div className="App">
-      <BoardBuilder boardType="birthday" />
+      {/* use below to see layouts */}
+      {/* <BoardBuilder boardType="birthday" />
       <BoardBuilder boardType="yearly" />
       <BoardBuilder boardType="other" />
-      <BoardBuilder boardType="celebration" />
+      <BoardBuilder boardType="celebration" /> */}
         <Toaster />
         <NavBar />
         <Routes>
