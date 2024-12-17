@@ -27,76 +27,51 @@ def seed_data():
 
             faker = Faker()
 
-            # Seed a test user with known credentials
+            # Create Test User
             test_user = User(
                 username="testuser",
                 email="test@example.com"
             )
-            test_user.password = "Test@12345!"  # Hashes password using the setter
+            test_user.password = "Testing@12345"  # Password is hashed via setter
             db.session.add(test_user)
             db.session.commit()
-            print("Test user seeded: email=test@example.com, password=Test@12345")
+            print("Test user created: email=test@example.com, password=Testing@12345")
 
-            # Seed additional users
-            users = [test_user]  # Start with the test user
-            for _ in range(4):  # Add 4 more random users
-                email = faker.unique.email()
-                user = User(
-                    username=faker.user_name(),
-                    email=email
-                )
-                user.password = "Pass@12345!"  # Assign random password
-                users.append(user)
-
-            db.session.add_all(users)
-            db.session.commit()
-
-            # Seed Boards
-            board_types = ["birthday", "yearly recap", "celebration", "other"]
-            boards = [
-                Board(
-                    user_id=choice(users).id,
-                    board_type=board_type,
-                    board_name=f"{faker.catch_phrase()} {board_type.capitalize()} Board",
-                )
-                for board_type in board_types
+            # Add Boards for Test User
+            test_boards = [
+                Board(user_id=test_user.id, board_name="Birthday Board", board_type="birthday"),
+                Board(user_id=test_user.id, board_name="Year Recap Board", board_type="yearly recap"),
+                Board(user_id=test_user.id, board_name="Celebration Board", board_type="celebration"),
+                Board(user_id=test_user.id, board_name="Other Board", board_type="other"),
             ]
-            db.session.add_all(boards)
+            db.session.add_all(test_boards)
             db.session.commit()
+            print(f"Added {len(test_boards)} boards for test user.")
 
-            # Hardcoded Questions
+            # Hardcoded Questions (Provided Data)
             questions_data = {
                 "birthday": [
                     "What’s one moment from today that deserves a permanent spot in your memory?",
                     "What was the best thing about the way you celebrated this birthday?",
                     "What’s a photo from today that perfectly sums up the vibe of your birthday?",
-                    "What’s one thing someone did or said today that made you feel extra loved?",
-                    "If you could keep just one thing from this birthday forever (besides memories), what would it be?",
                 ],
                 "yearly recap": [
                     "What’s one photo from this year that captures your happiest moment? Why?",
                     "Describe a scene from a place you visited this year that you’ll never forget.",
                     "What’s one goal you achieved this year? Picture yourself in that moment.",
-                    "If your year was a color palette, what colors would dominate it?",
-                    "What’s one unexpected moment this year that turned out to be magical?",
                 ],
                 "celebration": [
                     "What’s the most joyful part of this celebration? What made it special?",
                     "Describe the decorations from this celebration that left a lasting impression on you.",
-                    "What’s a moment during this celebration where you couldn’t stop smiling?",
                     "What’s one photograph from this celebration that sums up its energy and meaning?",
-                    "What’s the most heartfelt toast or speech or gesture you’ve heard or saw at this celebration?",
                 ],
                 "other": [
                     "What’s one small moment that made you smile unexpectedly?",
                     "Describe what made you pause and take it all in.",
-                    "Is there an object, big or small, that feels meaningful? Why?",
-                    "If you could capture one conversation in a photo, what would it look like?",
-                    "What’s one thing about your surroundings that feels comforting or inspiring?",
                 ],
             }
 
-            # Seed Questions
+            # Add Questions
             questions = []
             for board_type, texts in questions_data.items():
                 for text in texts:
@@ -104,43 +79,7 @@ def seed_data():
                     questions.append(question)
             db.session.add_all(questions)
             db.session.commit()
-
-            # Seed Answers
-            answers = []
-            for board in boards:
-                board_questions = [q for q in questions if q.board_type == board.board_type]
-                for question in board_questions:
-                    answer = Answer(
-                        board_id=board.id,
-                        question_id=question.id,
-                        answer_text=faker.sentence(nb_words=10),
-                    )
-                    answers.append(answer)
-            db.session.add_all(answers)
-            db.session.commit()
-
-            # Seed Media
-            media_items = []
-            for answer in answers:
-                if faker.boolean(chance_of_getting_true=90):  # 90% chance to add media
-                    media = Media(
-                        answer_id=answer.id,
-                        url=faker.image_url(),
-                    )
-                    media_items.append(media)
-            db.session.add_all(media_items)
-            db.session.commit()
-
-            # Seed BoardMedia (Avoid Duplicates)
-            board_media_pairs = set()
-            board_media_items = []
-            for board in boards:
-                for media in sample(media_items, min(len(media_items), 3)):
-                    if (board.id, media.id) not in board_media_pairs:
-                        board_media_pairs.add((board.id, media.id))
-                        board_media_items.append(BoardMedia(board_id=board.id, media_id=media.id))
-            db.session.add_all(board_media_items)
-            db.session.commit()
+            print(f"Added {len(questions)} questions.")
 
             print("Seeding complete!")
 

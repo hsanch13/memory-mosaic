@@ -72,19 +72,3 @@ class BoardResource(Resource):
         except Exception as e:
             db.session.rollback()
             return make_response({"error": str(e)}, 400)
-
-
-# def upload_to_aws(file):
-#     """
-#     Uploads a file to AWS S3 and returns the URL.
-#     """
-#     s3 = boto3.client('s3', aws_access_key_id="YOUR_ACCESS_KEY", aws_secret_access_key="YOUR_SECRET_KEY")
-#     bucket_name = "your-bucket-name"
-    
-#     try:
-#         file_name = file.filename  # Ensure file object has a filename attribute
-#         s3.upload_fileobj(file, bucket_name, file_name)
-#         return f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
-#     except (BotoCoreError, ClientError) as e:
-#         print(f"Error uploading to AWS: {e}")
-#         return None

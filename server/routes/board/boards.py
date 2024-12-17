@@ -1,27 +1,44 @@
 from models import Board
-from flask import request, make_response
+from flask import request, make_response, session
 from flask_restful import Resource
 from config import db
 
-# CRUD for Boards
 class Boards(Resource):
-    def get(self, id=None):
+    # GET: Fetch all boards belonging to the logged-in user
+    def get(self):
         try:
-            boards = Board.query
-            return make_response([board.to_dict() for board in boards], 200)
+            # Check if user is logged in
+            user_id = session.get("user_id")
+            if not user_id:
+                return make_response({"error": "Unauthorized. Please log in."}, 401)
+
+            # Fetch all boards for the logged-in user
+            user_boards = Board.query.filter_by(user_id=user_id).all()
+            return make_response(
+                [board.to_dict() for board in user_boards],
+                200
+            )
         except Exception as e:
             return make_response({"error": str(e)}, 500)
 
+    # POST: Create a new board for the logged-in user
     def post(self):
         try:
+            # Check if user is logged in
+            user_id = session.get("user_id")
+            if not user_id:
+                return make_response({"error": "Unauthorized. Please log in."}, 401)
+
+            # Create a new board
             data = request.get_json()
             new_board = Board(
-                user_id=data["user_id"],
-                board_type=data["board_type"],
+                user_id=user_id,
+                board_type=data.get("board_type"),
                 board_name=data.get("board_name")
             )
             db.session.add(new_board)
             db.session.commit()
+
             return make_response(new_board.to_dict(), 201)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
