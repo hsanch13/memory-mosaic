@@ -29,10 +29,11 @@ class Board(db.Model, SerializerMixin):
     def validate_board_type(self, _, value):
         valid_boards = ["birthday", "yearly recap", "celebration", "other"]
         if not isinstance(value, str):
-            raise ValueError("Board type must be a string")
+            raise ValueError(f"Board type must be a string, got {type(value)}: {value}")
         if value.lower() not in valid_boards:
             raise ValueError(f"Invalid board type: {value}. Must be one of {valid_boards}.")
         return value.lower()
+
 
     @validates("board_name")
     def validate_board_name(self, _, value):

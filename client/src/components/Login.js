@@ -15,7 +15,7 @@ function Login() {
         setError(null); // Clear previous errors
     
         try {
-            const response = await fetch("http://localhost:5555/login", {
+            const response = await fetch("/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include", // Enables cookies to be sent with the request

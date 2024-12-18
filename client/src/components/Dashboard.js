@@ -1,40 +1,50 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "./Sidebar";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "./Sidebar";
 
 export default function Dashboard() {
+
     const [boards, setBoards] = useState([]); // State to hold the user's boards
     const [error, setError] = useState(null); // State for critical errors
+    const navigate = useNavigate();
 
     // Fetch boards from the backend
     useEffect(() => {
-        const fetchBoards = async () => {
-            try {
-                const response = await fetch("http://localhost:5555/boards", {
-                    method: "GET",
-                    credentials: "include", // Include session cookies
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setBoards(data);
-                } else {
-                    const errorData = await response.json();
-                    toast.error(errorData.error || "Failed to load boards.");
-                }
-            } catch (err) {
-                console.error("Error fetching boards:", err);
-                toast.error("An unexpected error occurred while fetching boards.");
-                setError("An unexpected error occurred. Please try again.");
-            }
-        };
-
-        fetchBoards();
-    }, []);
-
+      const fetchBoards = async () => {
+          try {
+              const response = await fetch("/boards", {
+                  method: "GET",
+                  credentials: "include", // Include session cookies
+              });
+  
+              if (response.status === 404) {  // Handle 404 response
+                  toast.error("No boards found. Redirecting to dashboard...");
+                  navigate("/dashboard");
+                  return; // Exit early
+              }
+  
+              if (response.ok) {
+                  const data = await response.json();
+                  setBoards(data);
+              } else {
+                  const errorData = await response.json();
+                  toast.error(errorData.error || "Failed to load boards.");
+              }
+          } catch (err) {
+              console.error("Error fetching boards:", err);
+              toast.error("An unexpected error occurred while fetching boards.");
+              setError("An unexpected error occurred. Please try again.");
+          }
+      };
+  
+      fetchBoards();
+  }, []);
+  
     // Handle Delete Board
     const handleDelete = async (boardId) => {
         try {
-            const response = await fetch(`http://localhost:5555/boards/${boardId}`, {
+            const response = await fetch(`/boards/${boardId}`, {
                 method: "DELETE",
                 credentials: "include",
             });

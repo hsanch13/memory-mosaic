@@ -2,22 +2,25 @@ from models import Board
 from flask import make_response, session, request
 from flask_restful import Resource
 from config import db
+import ipdb
 
 class BoardsById(Resource):
     # GET: Fetch a single board by ID, only if it belongs to the logged-in user
     def get(self, id):
+        ipdb.set_trace()
         try:
             # Check if user is logged in
             user_id = session.get("user_id")
             if not user_id:
-                return make_response({"error": "Unauthorized. Please log in."}, 401)
+                return make_response({"error": "Unauthorized"}, 401)
+            
 
-            # Check board ownership
+            # Query the board and validate ownership
             board = Board.query.filter_by(id=id, user_id=user_id).first()
             if not board:
-                return make_response({"error": "Board not found or access denied."}, 404)
+                return make_response({"error": "Board not found or access denied"}, 404)
 
-            return make_response(board.to_dict(rules=("answers", "answers.medias")), 200)
+            return make_response(board.to_dict(), 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
 
