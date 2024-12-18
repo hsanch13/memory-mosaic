@@ -54,20 +54,29 @@ def seed_data():
                     "What’s one moment from today that deserves a permanent spot in your memory?",
                     "What was the best thing about the way you celebrated this birthday?",
                     "What’s a photo from today that perfectly sums up the vibe of your birthday?",
+                    "What’s one thing someone did or said today that made you feel extra loved?",
+                    "If you could keep just one thing from this birthday forever (besides memories), what would it be?",
                 ],
                 "yearly recap": [
                     "What’s one photo from this year that captures your happiest moment? Why?",
                     "Describe a scene from a place you visited this year that you’ll never forget.",
                     "What’s one goal you achieved this year? Picture yourself in that moment.",
+                    "If your year was a color palette, what colors would dominate it?",
+                    "What’s one unexpected moment this year that turned out to be magical?",
                 ],
                 "celebration": [
                     "What’s the most joyful part of this celebration? What made it special?",
                     "Describe the decorations from this celebration that left a lasting impression on you.",
+                    "What’s a moment during this celebration where you couldn’t stop smiling?",
                     "What’s one photograph from this celebration that sums up its energy and meaning?",
+                    "What’s the most heartfelt toast or speech or gesture you’ve heard or saw at this celebration?",
                 ],
                 "other": [
                     "What’s one small moment that made you smile unexpectedly?",
                     "Describe what made you pause and take it all in.",
+                    "Is there an object, big or small, that feels meaningful? Why?",
+                    "If you could capture one conversation in a photo, what would it look like?",
+                    "What’s one thing about your surroundings feels comforting or inspiring?",
                 ],
             }
 

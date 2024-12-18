@@ -2,45 +2,40 @@ import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { useGlobalContext } from "../GlobalContext";
 
 export default function Dashboard() {
-
     const [boards, setBoards] = useState([]); // State to hold the user's boards
     const [error, setError] = useState(null); // State for critical errors
+    const { setCurrentBoard } = useGlobalContext(); // Access the global context
     const navigate = useNavigate();
 
     // Fetch boards from the backend
     useEffect(() => {
-      const fetchBoards = async () => {
-          try {
-              const response = await fetch("/boards", {
-                  method: "GET",
-                  credentials: "include", // Include session cookies
-              });
-  
-              if (response.status === 404) {  // Handle 404 response
-                  toast.error("No boards found. Redirecting to dashboard...");
-                  navigate("/dashboard");
-                  return; // Exit early
-              }
-  
-              if (response.ok) {
-                  const data = await response.json();
-                  setBoards(data);
-              } else {
-                  const errorData = await response.json();
-                  toast.error(errorData.error || "Failed to load boards.");
-              }
-          } catch (err) {
-              console.error("Error fetching boards:", err);
-              toast.error("An unexpected error occurred while fetching boards.");
-              setError("An unexpected error occurred. Please try again.");
-          }
-      };
-  
-      fetchBoards();
-  }, []);
-  
+        const fetchBoards = async () => {
+            try {
+                const response = await fetch("/boards", {
+                    method: "GET",
+                    credentials: "include", // Include session cookies
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setBoards(data);
+                } else {
+                    const errorData = await response.json();
+                    toast.error(errorData.error || "Failed to load boards.");
+                }
+            } catch (err) {
+                console.error("Error fetching boards:", err);
+                toast.error("An unexpected error occurred while fetching boards.");
+                setError("An unexpected error occurred. Please try again.");
+            }
+        };
+
+        fetchBoards();
+    }, []);
+
     // Handle Delete Board
     const handleDelete = async (boardId) => {
         try {
@@ -49,7 +44,6 @@ export default function Dashboard() {
                 credentials: "include",
             });
             if (response.ok) {
-                // Remove the deleted board from the state
                 setBoards(boards.filter((board) => board.id !== boardId));
                 toast.success("Board deleted successfully!");
             } else {
@@ -63,31 +57,9 @@ export default function Dashboard() {
     };
 
     // Handle Edit Board
-    const handleEdit = async (boardId, updatedData) => {
-        try {
-            const response = await fetch(`/boards/${boardId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(updatedData),
-            });
-            if (response.ok) {
-                const updatedBoard = await response.json();
-                // Update the board in the state
-                setBoards((prevBoards) =>
-                    prevBoards.map((board) =>
-                        board.id === boardId ? updatedBoard : board
-                    )
-                );
-                toast.success("Board updated successfully!");
-            } else {
-                const errorData = await response.json();
-                toast.error(errorData.error || "Failed to update board.");
-            }
-        } catch (err) {
-            console.error("Error updating board:", err);
-            toast.error("An unexpected error occurred while updating the board.");
-        }
+    const handleEdit = (board) => {
+        setCurrentBoard(board); // Store the board data in context
+        navigate(`/edit-board/${board.id}`); // Navigate to edit page
     };
 
     return (
@@ -110,7 +82,7 @@ export default function Dashboard() {
                     <div className="mb-4 flex justify-between items-center">
                         <button
                             className="bg-black text-white px-4 py-2 rounded"
-                            onClick={() => toast("Redirect to board creation page!")}
+                            onClick={() => navigate("/create-board")}
                         >
                             + Create Board
                         </button>
@@ -141,15 +113,7 @@ export default function Dashboard() {
                                         <td className="p-3 space-x-2">
                                             <button
                                                 className="bg-blue-500 text-white px-2 py-1 rounded"
-                                                onClick={() => {
-                                                    const newBoardName = prompt(
-                                                        "Enter new board name:",
-                                                        board.board_name
-                                                    );
-                                                    if (newBoardName) {
-                                                        handleEdit(board.id, { board_name: newBoardName });
-                                                    }
-                                                }}
+                                                onClick={() => handleEdit(board)}
                                             >
                                                 Edit
                                             </button>
