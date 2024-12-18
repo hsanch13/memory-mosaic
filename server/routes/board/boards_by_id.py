@@ -7,7 +7,6 @@ import ipdb
 class BoardsById(Resource):
     # GET: Fetch a single board by ID, only if it belongs to the logged-in user
     def get(self, id):
-        ipdb.set_trace()
         try:
             # Check if user is logged in
             user_id = session.get("user_id")
@@ -19,8 +18,7 @@ class BoardsById(Resource):
             board = Board.query.filter_by(id=id, user_id=user_id).first()
             if not board:
                 return make_response({"error": "Board not found or access denied"}, 404)
-
-            return make_response(board.to_dict(), 200)
+            return make_response(board.to_dict(rules=("answers", "answers_media")), 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
 

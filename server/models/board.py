@@ -20,6 +20,7 @@ class Board(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="boards")
     answers = db.relationship("Answer", back_populates="board", cascade="all, delete-orphan")
     board_media = db.relationship("BoardMedia", back_populates="board", cascade="all, delete-orphan")
+    answers_media = association_proxy("answers", "media")
 
     # Serialization Rules
     serialize_rules = ("-user", "-answers", "-board_media")

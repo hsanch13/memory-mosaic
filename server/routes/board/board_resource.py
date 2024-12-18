@@ -8,24 +8,46 @@ import json
 class BoardResource(Resource):
     def post(self):
         try:
+            user_id = session.get("user_id")
+            if not user_id:
+                return make_response({"error": "User not logged in"}, 401)
+            # Debugging: Log the incoming request data
+            print("Request Content-Type:", request.content_type)
+            print("Request Form:", request.form)
+            print("Request Files:", request.files)
+
             # 1. Parse form-data or JSON
             if request.content_type.startswith("multipart/form-data"):
-                board_data = json.loads(request.form.get("board", "{}"))
-                answers_data = json.loads(request.form.get("answers", "[]"))
+                # Parse board data
+                board_data = {
+                    "type": request.form.get("board[type]"),
+                    "name": request.form.get("board[name]")
+                }
+                print("Parsed Board Data:", board_data)  # Debugging
+
+                # Parse answers data
+                answers_data = []
+                for i in range(5):  # Approximate count of answers
+                    answer_text = request.form.get(f"answers[{i}][text]")
+                    if answer_text:
+                        answers_data.append({
+                            "text": answer_text,
+                            "question_id": i + 1  # Assuming questions are sequentially numbered
+                        })
+                print("Parsed Answers Data:", answers_data)  # Debugging
+            
+            ### Could get rid of elif later 
             elif request.content_type == "application/json":
                 data = request.json
                 board_data = data.get("board")
                 answers_data = data.get("answers")
+                print("Parsed Board Data:", board_data)  # Debugging
+                print("Parsed Answers Data:", answers_data)  # Debugging
+
             else:
                 return make_response({"error": "Unsupported Content-Type"}, 400)
 
-            print("Board data received:", board_data)  # Debugging
-            print("Answers received:", answers_data)  # Debugging
-
             # 2. Ensure the user is logged in
-            user_id = session.get("user_id")
-            if not user_id:
-                return make_response({"error": "User not logged in"}, 401)
 
             if not board_data or not answers_data:
                 return make_response({"error": "Invalid request data"}, 400)
@@ -46,6 +68,9 @@ class BoardResource(Resource):
             upload_instance = Uploads()
 
             for idx, answer_data in enumerate(answers_data):
+                # Debugging: Log each answer being processed
+                print(f"Processing Answer {idx}:", answer_data)
+
                 # Create the answer
                 answer = Answer(
                     board_id=board.id,
@@ -59,22 +84,32 @@ class BoardResource(Resource):
 
                 # Handle media uploads for the answer
                 media_files = request.files.getlist(f"answers[{idx}][media]")
+                print(f"Media files for Answer {idx}:", media_files)  # Debugging
+
                 if media_files:
                     for file in media_files:
-                        # Upload the file using the Uploads class
-                        upload_response = upload_instance.post_file(file)
-                        if "urls" in upload_response:
-                            media_url = upload_response["urls"][0]
-                            print("File uploaded to:", media_url)  # Debugging
+                        try:
+                            # Upload the file using the Uploads class
+                            upload_response = upload_instance.post_file(file)
+                            print(f"Upload response for file {file.filename}:", upload_response)  # Debugging
 
-                            # Save media URL in the Media table
-                            media = Media(
-                                answer_id=answer.id,
-                                url=media_url
-                            )
-                            db.session.add(media)
-                        else:
-                            raise Exception("AWS upload failed")
+                            if "urls" in upload_response:
+                                media_url = upload_response["urls"][0]
+                                print("File uploaded to:", media_url)  # Debugging
+
+                                # Save media URL in the Media table
+                                media = Media(
+                                    answer_id=answer.id,
+                                    url=media_url
+                                )
+                                db.session.add(media)
+                                #Could probably move final 113 commit to here 
+                            else:
+                                raise Exception("AWS upload failed")
+
+                        except Exception as e:
+                            print(f"Error uploading file {file.filename}:", str(e))  # Debugging
+                            raise e
 
             db.session.commit()
 
@@ -82,10 +117,9 @@ class BoardResource(Resource):
             return make_response({
                 "message": "Board created successfully",
                 "board": board.to_dict(),
-                "answers": [a.to_dict() for a in created_answers]
             }, 201)
 
         except Exception as e:
             db.session.rollback()
-            print("Error:", e)  # Debugging
+            print("Error:", str(e))  # Debugging
             return make_response({"error": str(e)}, 400)
