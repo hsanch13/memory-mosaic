@@ -229,13 +229,11 @@ def delete(self, board_id):
                 for media in Media.query.filter_by(answer_id=answer.id).all():
                     try:
                         # Extract the file key from the URL and delete from AWS
-                        file_key = media.url.split("/")[-1]
+                        file_key = media.url.split("/")[-1]  # Assuming URL is S3 format
                         upload_instance.delete_file(file_key)
                         db.session.delete(media)  # Remove media record from database
                     except Exception as e:
                         print(f"Error deleting file {media.url} from AWS:", str(e))  # Debugging
-
-                db.session.delete(answer)  # Remove answer record from database
 
             # Step 4: Delete the board itself
             db.session.delete(board)

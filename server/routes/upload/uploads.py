@@ -40,6 +40,7 @@ class Uploads(Resource):
             print("AWS Upload Error:", e)  # Debugging
             return {"error": f"Failed to upload file {filename}: {str(e)}"}, 500
 
+########POST#########
     def post(self):
         """
         Handles multiple file uploads through form-data.
@@ -62,3 +63,20 @@ class Uploads(Resource):
         except Exception as e:
             print("Error in Uploads:", e)
             return make_response({"error": str(e)}, 400)
+
+######DELETE######
+def delete_file(self, file_key):
+        """
+        Deletes a single file from AWS S3 using its key.
+        """
+        try:
+            # Log the file_key for debugging
+            print(f"Attempting to delete file with key: {file_key}")  # Debugging
+            # Delete the file from AWS S3
+            bucket = environ.get("AWS_S3_BUCKET")
+            s3_client.delete_object(Bucket=bucket, Key=file_key)
+            print(f"File deleted successfully from S3: {file_key}")  # Debugging
+            return {"message": f"File {file_key} deleted successfully"}
+        except (BotoCoreError, ClientError) as e:
+            print("AWS Delete Error:", e)  # Debugging
+            return {"error": f"Failed to delete file {file_key}: {str(e)}"}, 500
