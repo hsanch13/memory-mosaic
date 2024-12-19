@@ -38,7 +38,7 @@ def index():
 
 
 #API ROUTES
-api.add_resource(BoardResource, "/create-board")
+api.add_resource(BoardResource, "/create-board", "/boards/<int:board_id>")
 
 api.add_resource(Uploads, "/uploads")
 
