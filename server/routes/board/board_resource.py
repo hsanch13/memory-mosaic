@@ -125,7 +125,6 @@ class BoardResource(Resource):
             return make_response({"error": str(e)}, 400)
 
 ###### PATCH ########
-class BoardResource(Resource):
     def patch(self, board_id):
         try:
             # Debugging: Log the incoming request data
@@ -215,4 +214,36 @@ class BoardResource(Resource):
             return make_response({"error": str(e)}, 400)
 
 ########DELETE########
+def delete(self, board_id):
+        try:
+            # Step 1: Retrieve the board
+            board = Board.query.get(board_id)
+            if not board:
+                return make_response({"error": f"Board with id {board_id} not found"}, 404)
 
+            # Step 2: Initialize AWS upload instance
+            upload_instance = Uploads()
+
+            # Step 3: Delete all associated answers and media
+            for answer in Answer.query.filter_by(board_id=board.id).all():
+                for media in Media.query.filter_by(answer_id=answer.id).all():
+                    try:
+                        # Extract the file key from the URL and delete from AWS
+                        file_key = media.url.split("/")[-1]
+                        upload_instance.delete_file(file_key)
+                        db.session.delete(media)  # Remove media record from database
+                    except Exception as e:
+                        print(f"Error deleting file {media.url} from AWS:", str(e))  # Debugging
+
+                db.session.delete(answer)  # Remove answer record from database
+
+            # Step 4: Delete the board itself
+            db.session.delete(board)
+            db.session.commit()
+
+            return make_response({"message": f"Board with id {board_id} deleted successfully"}, 200)
+
+        except Exception as e:
+            db.session.rollback()  # Roll back transaction on error
+            print("Error:", str(e))  # Debugging
+            return make_response({"error": str(e)}, 400)
