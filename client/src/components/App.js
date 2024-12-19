@@ -51,7 +51,7 @@ function App() {
   return (
     <GlobalProvider>
       <div className="App">
-        {/* use below to see layouts */}
+        {/* dummy layouts below */}
         {/* <BoardBuilder boardType="birthday" />
         <BoardBuilder boardType="yearly" />
         <BoardBuilder boardType="other" />
