@@ -81,7 +81,7 @@ function App() {
           <Route path="/boards/:id" element={<BoardBuilder />} />
 
           {/* Test Layouts Route */}
-          <Route path="/test-layouts" element={<TestLayouts />} />
+          {/* <Route path="/test-layouts" element={<TestLayouts />} /> */}
 
           {/* Catch-All Route */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
