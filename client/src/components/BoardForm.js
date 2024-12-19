@@ -6,7 +6,7 @@ import { GlobalContext } from "../GlobalContext";
 import { useNavigate } from "react-router-dom";
 
 export default function BoardForm() {
-    const { boardType } = useContext(GlobalContext);
+    const { boardType, setBoardName, setCurrentBoard } = useContext(GlobalContext);
     const [questions, setQuestions] = useState([]);
     const [filePreviews, setFilePreviews] = useState({});
     const navigate = useNavigate();
@@ -44,41 +44,56 @@ export default function BoardForm() {
         ),
     });
 
+    // Handle form submission
     const handleSubmit = async (values, { setSubmitting }) => {
         try {
-            const formData = new FormData();
-            formData.append("board[type]", boardType);
-            formData.append("board[name]", values.boardName);
-
-            values.answers.forEach((answer, index) => {
-                formData.append(`answers[${index}][text]`, answer.text);
-                if (answer.file) {
-                    formData.append(`answers[${index}][media]`, answer.file);
-                }
-            });
-
-            const response = await fetch("/create-board", {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                toast.success("Board created successfully!");
-                navigate(`/boards/${data.board.id}`);
-            } else {
-                const errorData = await response.json();
-                toast.error(errorData.error || "Failed to create board.");
+          const formData = new FormData();
+          formData.append("board[type]", boardType);
+          formData.append("board[name]", values.boardName);
+      
+          values.answers.forEach((answer, index) => {
+            formData.append(`answers[${index}][text]`, answer.text);
+            if (answer.file) {
+              formData.append(`answers[${index}][media]`, answer.file);
             }
+          });
+      
+          const response = await fetch("/create-board", {
+            method: "POST",
+            credentials: "include",
+            body: formData,
+          });
+      
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Data received from backend:", data); // Log the backend response
+      
+            // Update currentBoard in context
+            const boardData = {
+              board_type: boardType,
+              questions: data.board.questions || [],
+              answers: data.board.answers || [],
+              media: data.board.media || [],
+            };
+      
+            console.log("Setting currentBoard in context:", boardData); // Log what will be set
+            setCurrentBoard(boardData);
+      
+            toast.success("Board created successfully!");
+            navigate(`/boards/${data.board.id}`);
+          } else {
+            const errorData = await response.json();
+            console.error("Error response from backend:", errorData);
+            toast.error(errorData.error || "Failed to create board.");
+          }
         } catch (err) {
-            console.error("Error creating board:", err);
-            toast.error("An unexpected error occurred.");
+          console.error("Error creating board:", err);
+          toast.error("An unexpected error occurred.");
         } finally {
-            setSubmitting(false);
+          setSubmitting(false);
         }
-    };
-
+      };
+      
     return (
         <div className="p-6 max-w-3xl mx-auto bg-white rounded shadow">
             <Toaster />

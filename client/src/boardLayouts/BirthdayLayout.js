@@ -1,7 +1,7 @@
 import React from "react";
-import "../animations/birthdayAnimations.css"; // Import Birthday animations
+import "../animations/birthdayAnimations.css"; // Import animations
 
-const BirthdayLayout = ({ questions, answers, media }) => {
+const BirthdayLayout = ({ questions = [], answers = [], media = [] }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-darkGray to-birthdayAccent text-white">
       {/* Hero Section */}
@@ -22,7 +22,7 @@ const BirthdayLayout = ({ questions, answers, media }) => {
             className="p-6 bg-gray-800 rounded-lg shadow-lg card-hover"
           >
             <h2 className="text-2xl font-semibold text-birthdayAccent mb-4">
-              {question.text}
+              {question.text || "No question provided."}
             </h2>
             <p>{answers[index]?.answer_text || "No response yet."}</p>
             {media[index] && (
@@ -39,4 +39,4 @@ const BirthdayLayout = ({ questions, answers, media }) => {
   );
 };
 
-export default BirthdayLayout;
+export default BirthdayLayout

@@ -72,20 +72,15 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/dashboard" />} />
+          {/* Board Creation and Editing */}
           <Route path="/create-board" element={<CreateBoard />} />
           <Route path="/create-board/:boardType" element={<BoardForm />} />
-
-          {/* Main Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/create-board" element={<CreateBoard />} />
           <Route path="/edit-board/:id" element={<EditBoard />} />
 
           {/* Dynamic Route for Board Viewing */}
-          {/* <Route
-              path="/boards/:boardType/:id"
-              element={<BoardBuilderWrapper />}
-            /> */}
+          <Route path="/boards/:id" element={<BoardBuilder />} />
+
+          {/* Test Layouts Route */}
           <Route path="/test-layouts" element={<TestLayouts />} />
 
           {/* Catch-All Route */}
