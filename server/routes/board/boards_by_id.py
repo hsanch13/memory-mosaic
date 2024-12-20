@@ -18,8 +18,9 @@ class BoardsById(Resource):
             board = Board.query.filter_by(id=id, user_id=user_id).first()
             if not board:
                 return make_response({"error": "Board not found or access denied"}, 404)
-            print(board.to_dict(rules=("answers", "answers_media"))["answers_media"])
-            return make_response(board.to_dict(rules=("answers", "answers_media")), 200)
+            # print(board.to_dict(rules=("answers", "answers_media"))["answers_media"])
+            # return make_response(board.to_dict(rules=("answers", "answers_media")), 200)
+            return make_response(board.to_dict(), 200)
         except Exception as e:
             return make_response({"error": str(e)}, 500)
 

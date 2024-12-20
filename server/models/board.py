@@ -25,6 +25,23 @@ class Board(db.Model, SerializerMixin):
     # Serialization Rules
     serialize_rules = ("-user", "-answers", "-board_media")
 
+
+    def to_dict(self, rules=None):
+        # Serialize the board data
+        data = super().to_dict(rules=rules)
+
+        # Include answers and their media
+        data["answers"] = [
+            {
+                "text": answer.answer_text,
+                "media": [media.url for media in answer.media],  # Media URLs associated with the answer
+            }
+            for answer in self.answers
+        ]
+
+        return data
+
+
     # Validations
     @validates("board_type")
     def validate_board_type(self, _, value):
