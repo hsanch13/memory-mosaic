@@ -78,6 +78,7 @@ export default function BoardForm() {
                 };
 
                 console.log("Setting currentBoard in context:", boardData);
+                console.log(data)
                 setCurrentBoard(boardData);
 
                 toast.success("Board created successfully!");

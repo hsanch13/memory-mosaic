@@ -23,7 +23,7 @@ const BoardBuilder = () => {
             id: currentBoard.id,
             questions: data.questions || [],
             answers: data.answers || [], // Use answers from the backend
-            media: data.media || [],     // Use media from the backend
+            media: data.answer_media[0] || [],     // Use media from the backend
           });
         } else {
           toast.error("Failed to fetch board details.");

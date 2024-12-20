@@ -4,6 +4,8 @@ import "../animations/birthdayAnimations.css";
 const BirthdayLayout = ({ answers = [], media = [] }) => {
     const placeholders = Array.from({ length: 5 }); // Create 5 placeholders
 
+    console.log(media)
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-black via-darkGray to-birthdayAccent text-white">
             {/* Hero Section */}
@@ -27,9 +29,9 @@ const BirthdayLayout = ({ answers = [], media = [] }) => {
                             Memory {index + 1}
                         </h2>
                         <p>{answers[index]?.answer_text || "No response yet."}</p>
-                        {media[index]?.url ? (
+                        {media[index] ? (
                             <img
-                                src={media[index].url}
+                                src={media[index]?.url}
                                 alt={`Photo ${index + 1}`}
                                 className="mt-4 rounded-lg w-full h-48 object-cover"
                             />

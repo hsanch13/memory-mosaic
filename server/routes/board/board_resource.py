@@ -8,6 +8,13 @@ import json
 class BoardResource(Resource):
     def post(self):
         try:
+            board_response = {"board_type": "",
+                    "board_name": "",
+                    "id": 0,
+                    "questions": [],
+                    "answers": [],
+                    "media": [],}
+            
             user_id = session.get("user_id")
             if not user_id:
                 return make_response({"error": "User not logged in"}, 401)
@@ -80,7 +87,7 @@ class BoardResource(Resource):
                 db.session.add(answer)
                 db.session.commit()
                 print(f"Answer created with ID: {answer.id}")  # Debugging
-                created_answers.append(answer)
+                created_answers.append(answer.answer_text)
 
                 # Handle media uploads for the answer
                 media_files = request.files.getlist(f"answers[{idx}][media]")
@@ -103,6 +110,7 @@ class BoardResource(Resource):
                                     url=media_url
                                 )
                                 db.session.add(media)
+                                board_response["media"].append(media.url) # adds the media into the board_response object
                                 #Could probably move final 113 commit to here 
                             else:
                                 raise Exception("AWS upload failed")
@@ -112,11 +120,13 @@ class BoardResource(Resource):
                             raise e
 
             db.session.commit()
-
+            board_response["id"]=board.id
+            board_response["answers"]=created_answers
             # 5. Return success response
+            print(board.to_dict())
             return make_response({
                 "message": "Board created successfully",
-                "board": board.to_dict(),
+                "board": board_response,
             }, 201)
 
         except Exception as e:
