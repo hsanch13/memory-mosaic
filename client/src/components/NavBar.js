@@ -1,5 +1,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom'
+
 
 const navigation = [
   { name: 'Create Board', href: '#', current: true },
@@ -26,11 +28,11 @@ export default function NavBar() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex shrink-0 items-center">
-              <img
+              {/* <img
                 alt="Your Company"
                 src=""
-                className="h-8 w-auto"
-              />
+                className="h-8 w-auto" */}
+              {/* /> */}
             </div>
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
