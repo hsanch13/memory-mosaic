@@ -99,6 +99,34 @@ python server/seed.py
 
 ---
 
+## AWS S3 Integration for File Uploads
+
+Memory Mosaic supports media uploads, such as photos and videos, which are stored in AWS S3. To enable this feature, ensure the following:
+
+### Prerequisites
+
+- Create an AWS S3 bucket.
+- Set up IAM credentials with appropriate permissions for S3 access.
+- Add the following environment variables to your project:
+  - `AWS_S3_BUCKET`: Name of your S3 bucket.
+  - `AWS_REGION_NAME`: Region where your S3 bucket is hosted.
+  - `AWS_ACCESS_KEY_ID`: Your IAM access key.
+  - `AWS_SECRET_ACCESS_KEY`: Your IAM secret key.
+
+### File Upload Process
+
+1. Media files are uploaded via the `Uploads` class in the backend.
+2. Files are securely sent to the specified S3 bucket using `boto3`.
+3. The `Media` model stores the S3 URL for each uploaded file.
+
+Ensure `boto3` is installed in your environment:
+
+```console
+pipenv install boto3
+```
+
+---
+
 ## Features
 
 ### User Authentication
@@ -118,6 +146,30 @@ Boards are displayed with custom CSS animations tailored to each board type, pro
 ### Many-to-Many Relationships
 
 The `BoardMedia` join table links Boards and Media, enabling boards to showcase multiple media items.
+
+---
+
+## Dependencies
+
+### Backend Dependencies
+
+- Flask
+- Flask-SQLAlchemy
+- Flask-Migrate
+- Flask-Bcrypt
+- Flask-RESTful
+- Flask-CORS
+- SQLAlchemy-Serializer
+- boto3
+
+### Frontend Dependencies
+
+- React
+- React Router
+- Formik
+- Yup
+- TailwindCSS
+- react-hot-toast
 
 ---
 
