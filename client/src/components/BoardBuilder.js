@@ -46,7 +46,7 @@ const BoardBuilder = () => {
         switch (board_type) {
             case "birthday":
                 return <BirthdayLayout answers={answers} media={media} />;
-            case "yearly":
+            case "yearly recap":
                 return <YearlyRecapLayout answers={answers} media={media} />;
             case "other":
                 return <OtherLayout answers={answers} media={media} />;
