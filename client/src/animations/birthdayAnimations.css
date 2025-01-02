@@ -33,3 +33,9 @@
     box-shadow: 0 4px 10px rgba(251, 191, 36, 0.5);
   }
   
+  .photo-placeholder {
+    opacity: 0; /* Hidden initially */
+    transform: scale(0.8); /* Slightly scaled down initially */
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  

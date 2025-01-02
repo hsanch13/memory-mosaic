@@ -62,6 +62,12 @@ export default function Dashboard() {
         navigate(`/edit-board/${board.id}`); // Navigate to edit page
     };
 
+    // Handle View Board
+    const handleView = (board) => {
+        setCurrentBoard(board); // Store the board data in context
+        navigate(`/boards/${board.id}`); // Navigate to the view page
+    };
+
     return (
         <div className="flex">
             <Toaster /> {/* React Hot Toast Container */}
@@ -111,6 +117,12 @@ export default function Dashboard() {
                                         <td className="p-3">{board.created_at}</td>
                                         <td className="p-3">{board.updated_at}</td>
                                         <td className="p-3 space-x-2">
+                                            <button
+                                                    className="bg-green-500 text-white px-2 py-1 rounded"
+                                                    onClick={() => handleView(board)}
+                                                >
+                                                    View
+                                                </button>
                                             <button
                                                 className="bg-blue-500 text-white px-2 py-1 rounded"
                                                 onClick={() => handleEdit(board)}
