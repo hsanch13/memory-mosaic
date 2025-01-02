@@ -26,16 +26,6 @@ export default function Sidebar() {
             </li>
           </ul>
         </nav>
-  
-        {/* User Profile */}
-        <div className="p-4 border-t border-gray-700 flex items-center">
-          <img
-            src="https://via.placeholder.com/32"
-            alt="Profile"
-            className="w-8 h-8 rounded-full mr-3"
-          />
-          <span>Matthew Parker</span>
-        </div>
       </div>
     );
   }
