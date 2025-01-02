@@ -207,6 +207,10 @@ class BoardResource(Resource):
                                 print("File uploaded to:", media_url)  # Debugging
 
                                 # Save media URL in the Media table
+                                old_media = Media.query.filter_by(answer_id=answer.id).first()
+                                if old_media: 
+                                    db.session.delete(old_media)
+                                    
                                 media = Media(answer_id=answer.id, url=media_url)
                                 db.session.add(media)
                             else:
